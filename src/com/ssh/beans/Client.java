@@ -22,7 +22,7 @@ import org.apache.http.util.EntityUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken; 
 
-import com.ssh.beans.User;
+import com.ssh.beans.Agv;
 
 public class Client {  
 	
@@ -39,7 +39,9 @@ public class Client {
 				final long timeInterval = 1000;
 				String host = "192.168.137.1";  
 				int port = 8080;     	
-		        
+				String page="/SSH_project/login";		       
+
+ 
 				Socket client = null;
 				try {
 					client = new Socket(host, port);
@@ -54,11 +56,11 @@ public class Client {
 				String svr_out_str = null;
 				BufferedReader cam_reader = null;
 				BufferedWriter cam_writer = null;
-				char[] buf = new char[100];
+				char[] buf = new char[10];
 				File svr_out_fd = null;
 				File cam_in_fd = null;
-				Type type = new TypeToken<List<User>>(){}.getType();			
-				List<User> list = null;
+				Type type = new TypeToken<Agv>(){}.getType();			
+				Agv agv = null;
  
 				if(cam_in_fd==null)
 					cam_in_fd = new File(cam_in);
@@ -86,10 +88,7 @@ public class Client {
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
-			
-				String page="/SSH_project/register";
-				String name = "user_test";
-				String password="user_passcode";
+				
 				Map<String, String> map = new HashMap<String, String>();  
 				StringBuffer sb = new StringBuffer();	
 		        
@@ -118,16 +117,22 @@ public class Client {
 		        	map.put("agv.xccord","0"); 
 		        	map.put("agv.ycoord","0");
 					map.put("agv.msg",output);
-					jsonString = new Gson().toJson(map);
-					jsonByte = jsonString.getBytes();
+					String data = map.toString().substring(1,map.toString().length()-1);
+					data = data.replace(", ","&");
 					
 					sb.delete(0,sb.length());
 					sb.append("POST "+page+" HTTP/1.1\r\n");  
-		        	sb.append("Host: "+ host +"\r\n");  
+		        	sb.append("Host: "+ host +":"+port+"\r\n");  
 		        	sb.append("Accept: text/html\r\n");  
-		        	sb.append("Connection: Keep-Alive\r\n");  
+		        	sb.append("Connection: Keep-Alive\r\n"); 
+					 
+		        	sb.append("Content-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n"); 
+		        	sb.append("Content-Length:"+data.length()+"\r\n");
 		        	sb.append("\r\n"); 
-		        	sb.append(jsonByte);
+				
+					sb.append(data);
+					System.out.println(sb.toString()); 
+		        	
 
 					try {
 						writer.write(sb.toString());
@@ -167,14 +172,8 @@ public class Client {
 						result = result.substring(1,result.length()-1);
 						result = result.replace("\\", "");
 						 
-						list= new Gson().fromJson(result, type);
-						for (Iterator iterator = list.iterator(); iterator.hasNext();){
-							User user = (User)iterator.next(); 
-							//System.out.print("username: " + user.getUsername()); 
-							//System.out.print("  userId: " + user.getUserId()); 
-							//System.out.println("  gender: " + user.getGender());
-							svr_out_str = "username "+user.getUsername()+" userID "+user.getUserId()+" gender "+user.getGender()+"#";
-						}
+						agv= new Gson().fromJson(result, type);
+						svr_out_str = result;
 					}
 			        catch (Exception e)
 					{
