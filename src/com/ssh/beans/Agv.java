@@ -6,8 +6,7 @@ public class Agv {
 	private int xcoord;
 	private int ycoord;
 	private String netid;
-	private int agvId;
-	
+
 	public String getMsg() {
 		return msg;
 	}
@@ -32,12 +31,5 @@ public class Agv {
 	public void setNetid(String netid) {
 		this.netid = netid;
 	}
-	public int getAgvId() {
-		return agvId;
-	}
-	public void setAgvId(int agvId) {
-		this.agvId = agvId;
-	}
-
 
 }

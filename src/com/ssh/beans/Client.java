@@ -59,7 +59,9 @@ public class Client {
 				char[] buf = new char[10];
 				File svr_out_fd = null;
 				File cam_in_fd = null;
+				Type typelist = new TypeToken<List<Agv>>(){}.getType();			
 				Type type = new TypeToken<Agv>(){}.getType();			
+				List<Agv> agvlist = null;
 				Agv agv = null;
  
 				if(cam_in_fd==null)
@@ -104,7 +106,7 @@ public class Client {
 						e1.printStackTrace();
 					}
 					String output = new StringBuilder().append(buf).toString(); 
-					System.out.print(output);						
+					//System.out.println(output);						
 	
 					map.clear();	
 					InetAddress address = null;
@@ -114,8 +116,8 @@ public class Client {
 						e1.printStackTrace();
 					}
 					map.put("agv.netid",address.toString());  
-		        	map.put("agv.xccord","0"); 
-		        	map.put("agv.ycoord","0");
+		        	map.put("agv.xcoord","23"); 
+		        	map.put("agv.ycoord","54");
 					map.put("agv.msg",output);
 					String data = map.toString().substring(1,map.toString().length()-1);
 					data = data.replace(", ","&");
@@ -171,7 +173,6 @@ public class Client {
 			        {
 						result = result.substring(1,result.length()-1);
 						result = result.replace("\\", "");
-						 
 						agv= new Gson().fromJson(result, type);
 						svr_out_str = result;
 					}
@@ -194,7 +195,8 @@ public class Client {
 						e1.printStackTrace();
 					}
 					System.out.println("Write to client Done!");	
-						
+					System.out.println("");
+					System.out.println("");	
 				}
 		    }
 		};
