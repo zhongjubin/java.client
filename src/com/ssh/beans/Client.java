@@ -39,7 +39,7 @@ public class Client {
 				final long timeInterval = 1000;
 				String host = "192.168.137.1";  
 				int port = 8080;     	
-				String page="/SSH_project/login";		       
+				String page="/SSH_project/register";		       
 
  
 				Socket client = null;
@@ -56,7 +56,7 @@ public class Client {
 				String svr_out_str = null;
 				BufferedReader cam_reader = null;
 				BufferedWriter cam_writer = null;
-				char[] buf = new char[10];
+				char[] buf = new char[100];
 				File svr_out_fd = null;
 				File cam_in_fd = null;
 				Type typelist = new TypeToken<List<Agv>>(){}.getType();			
@@ -105,9 +105,8 @@ public class Client {
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
-					String output = new StringBuilder().append(buf).toString(); 
-					//System.out.println(output);						
-	
+					String output = new StringBuilder().append(buf).toString().trim(); 
+					//System.out.println(output.length());							
 					map.clear();	
 					InetAddress address = null;
 					try{
@@ -132,11 +131,11 @@ public class Client {
 		        	sb.append("Content-Length:"+data.length()+"\r\n");
 		        	sb.append("\r\n"); 
 				
-					sb.append(data);
-					System.out.println(sb.toString()); 
-		        	
+					sb.append(data);	
 
 					try {
+						System.out.println("Writing to server...");
+						System.out.println(sb.toString()); 
 						writer.write(sb.toString());
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -174,7 +173,7 @@ public class Client {
 						result = result.substring(1,result.length()-1);
 						result = result.replace("\\", "");
 						agv= new Gson().fromJson(result, type);
-						svr_out_str = result;
+						svr_out_str = "Agv "+agv.getNetid()+" at("+agv.getXcoord()+","+agv.getYcoord()+") is processed!";
 					}
 			        catch (Exception e)
 					{
@@ -185,6 +184,7 @@ public class Client {
 					System.out.println("Writing to client...");	
 					try {
 						cam_writer.write(svr_out_str);
+						System.out.println(svr_out_str);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
